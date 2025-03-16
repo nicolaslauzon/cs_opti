@@ -3,7 +3,7 @@ import json
 from custom_types import Box, BoxInventory, Order, Warehouse, Customer, Truck
 
 
-def parse_las_brickas() -> tuple[list[Warehouse], list[Customer], np.ndarray]:
+def parse_las_brickas():
     LAS_BRICKAS_FILENAME = "./data/las_brickas.json"
 
     matrix = np.full((5000, 5000), None, dtype=object)
@@ -23,7 +23,9 @@ def parse_las_brickas() -> tuple[list[Warehouse], list[Customer], np.ndarray]:
 
     parsed_warehouses = {}
     warehouses = data["Warehouses"]
-    for warehouse in warehouses:
+    for i, warehouse in enumerate(warehouses):
+        if i > 0:
+            break
         coords = warehouse["Coordinates"]
 
         ware = Warehouse(warehouse["Id"], coords["X"], coords["Y"], [])

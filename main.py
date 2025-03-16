@@ -1,4 +1,7 @@
 from parsers import parse_las_brickas, parse_day
+import json
+import requests
+
 import numpy as np
 from custom_types import Box, Order, Warehouse, Customer, Truck
 import networkx as nx
@@ -28,7 +31,7 @@ def build_graph_from_matrix(matrix):
 
     print("started solving traveling salesman")
     cycle = nx.approximation.traveling_salesman_problem(G, cycle=True)
-    with open("out2.txt", "w") as f:
+    with open("out3.txt", "w") as f:
         for point in cycle:
             f.write(f"{point[0]},{point[1]}\n")  # Save as x,y coordinates
 
@@ -36,24 +39,31 @@ def build_graph_from_matrix(matrix):
 
 
 def day2():
-    day2fromCycleFile()
-    # print("started parsing")
-    # customers, warehouses, matrix = parse_las_brickas()
-    # print("parsed las brickas")
-    # warehouses, customers, trucks, box = parse_day(DAY2_FILENAME, warehouses, customers)
-    # print("parsed day 2")
-    # # build_graph_from_matrix(matrix)
+    customers, warehouses, matrix = parse_las_brickas()
+    warehouses, customers, trucks, box = parse_day(DAY2_FILENAME, warehouses, customers)
+
+    warehouses = [warehouses[0]]
+    steps = []
+    steps = addAllLoadsForDay2(steps, customers)
+    # print(steps)
+    day2fromCycleFile(matrix, warehouses, steps)
 
 
-# def day2():
-#     customers, warehouses, matrix = parse_las_brickas()
-#     warehouses, customers, trucks, box = parse_day(DAY2_FILENAME, warehouses, customers)
-#     steps = []
-#     steps = addAllLoadsForDay2(steps, customers)
+def send_solution(obj):
+    url = "https://opti.csgames.org/Solution"
+    headers = {"accept": "text/plain", "Content-Type": "application/json"}
+
+    response = requests.post(url, json=obj, headers=headers)
+
+    if response.status_code == 200:
+        print("Solution submitted successfully!")
+        print("Response:", response.text)
+    else:
+        print("Error:", response.status_code, response.text)
 
 
-def day2fromCycleFile():
-    filename = "./out2.txt"
+def day2fromCycleFile(matrix, warehouses: list[Warehouse], steps):
+    filename = "./out3.txt"
 
     data = np.loadtxt(filename, delimiter=",", dtype=int)
 
@@ -68,19 +78,44 @@ def day2fromCycleFile():
     start_index = cycle.index((x, y))
 
     # Reorder the cycle starting from the found index
-    ordered_cycle = cycle[start_index:] + cycle[: start_index + 1]
-    print(ordered_cycle)
-    return ordered_cycle
+    ordered_cycle = cycle[start_index + 1 :] + cycle[:start_index]
+
+    truckId = 0
+
+    for coords in ordered_cycle:
+        x, y = coords
+        customer: Customer = matrix[x][y]
+        addMoveToCustomerActionToAnswer(str(truckId), str(customer.id), steps)
+        # print(x, y)
+        for order in customer.orders:
+            if order.box_id == 97 or order.box_id == 30:
+                continue
+            addDeliverActionToAnswer(
+                str(truckId), str(order.qty), str(order.box_id), steps
+            )
+
+    addMoveToWarehouseActionToAnswer(str(truckId), str(warehouses[0].id), steps)
+    obj = {
+        "credentials": {"teamName": "Rouge", "password": "package-weak-those"},
+        "dayNumber": 2,
+        "steps": steps,
+    }
+    # send_solution(obj)
+    with open("solution.json", "w") as f:
+        json.dump(obj, f, indent=4)
 
 
 def addAllLoadsForDay2(steps, customers):
+    _97 = False
     orderDict = {}
     for customer in customers:
         for order in customers[customer].orders:
+            if order.box_id == 30 or order.box_id -=:
+                continue
             if order.box_id in orderDict:
-                orderDict[order.box_id] += 1
+                orderDict[order.box_id] += order.qty
             else:
-                orderDict[order.box_id] = 1
+                orderDict[order.box_id] = order.qty
     for legoType in orderDict:
         steps = addLoadActionToAnswer(0, orderDict[legoType], legoType, steps)
     return steps
@@ -128,3 +163,6 @@ def addMoveToWarehouseActionToAnswer(truck, warehouse, steps):
 
 if __name__ == "__main__":
     day2()
+    # customers, warehouses, matrix = parse_las_brickas()
+    # print(warehouses)
+    # build_graph_from_matrix(matrix)
