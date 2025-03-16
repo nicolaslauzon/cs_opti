@@ -19,7 +19,6 @@ class Order:
     box: Box
     qty: int
 
-
 @dataclass
 class Customer:
     id: int
@@ -113,6 +112,22 @@ def day1():
     customers, warehouses, matrix = parse_las_brickas()
     warehouses, customers, trucks, box = parse_day(DAY1_FILENAME, warehouses, customers)
     print(box)
+
+def addLoadActionToAnswer(truck, quantity, lego, steps): 
+    steps.append("load truck=" + truck +"  quantity=" + quantity + " lego=" + lego)
+    return steps
+
+def addMoveToCustomerActionToAnswer(truck, customer, steps): 
+    steps.append("move_to_customer truck=" + truck +" customer=" + customer)
+    return steps
+
+def addDeliverActionToAnswer(truck, quantity, lego, steps): 
+    steps.append("deliver truck=" + truck +" quantity=" + quantity +" lego=" + lego)
+    return steps
+
+def addMoveToWarehouseActionToAnswer(truck, warehouse, steps): 
+    steps.append("move_to_warehouse truck=" + truck +" warehouse=" + warehouse)
+    return steps
 
 
 if __name__ == "__main__":
