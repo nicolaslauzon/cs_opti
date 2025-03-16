@@ -12,6 +12,11 @@ def day1():
     warehouses, customers, trucks, box = parse_day(DAY1_FILENAME, warehouses, customers)
     print(box)
 
+def getDistManhattan(x1, y1, x2, y2): 
+    xDiff = abs(x2 - x1)
+    yDiff = abs(y2 - y1)
+    return xDiff + yDiff
+
 
 def addLoadActionToAnswer(truck, quantity, lego, steps):
     steps.append("load truck=" + truck + "  quantity=" + quantity + " lego=" + lego)
