@@ -43,12 +43,14 @@ def parse_day(filename, warehouses: list[Warehouse], customers: list[Customer]):
     for truck in trucks:
         truck = Truck(warehouses[truck["AffiliatedWarehouseId"]], truck["Capacity"])
         parsed_trucks.append(truck)
+    print("parsed trucks")
 
     parsed_box = {}
     legos = data["Legos"]
     for lego in legos:
         box = Box(lego["Id"], lego["Weight"])
         parsed_box[box.id] = box
+    print("parsed boxes")
 
     new_customer_data = data["Customers"]
     for new_data in new_customer_data:
@@ -59,6 +61,7 @@ def parse_day(filename, warehouses: list[Warehouse], customers: list[Customer]):
                 order_json["Quantity"],
             )
             customers[new_data["Id"]].orders.append(order)
+    print("parsed customers")
 
     new_warehouse_data = data["Warehouses"]
     for new_data in new_warehouse_data:
@@ -66,5 +69,6 @@ def parse_day(filename, warehouses: list[Warehouse], customers: list[Customer]):
             box = parsed_box[box_json["LegoId"]]
             for _ in range(box_json["Quantity"]):
                 warehouses[new_data["Id"]].stock.append(box)
+    print("parsed warehouses")
 
     return warehouses, customers, parsed_trucks, parsed_box
