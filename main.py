@@ -1,7 +1,6 @@
 import json
 from dataclasses import dataclass
 
-
 @dataclass
 class Customer:
     id: int
@@ -36,6 +35,22 @@ def parse_las_brickas():
         parsed_warehouses.append(Customer(warehouse["Id"], coords["X"], coords["Y"]))
 
     return parsed_customers, parsed_warehouses
+
+def addLoadActionToAnswer(truck, quantity, lego, steps): 
+    steps.append("load truck=" + truck +"  quantity=" + quantity + " lego=" + lego)
+    return steps
+
+def addMoveToCustomerActionToAnswer(truck, customer, steps): 
+    steps.append("move_to_customer truck=" + truck +" customer=" + customer)
+    return steps
+
+def addDeliverActionToAnswer(truck, quantity, lego, steps): 
+    steps.append("deliver truck=" + truck +" quantity=" + quantity +" lego=" + lego)
+    return steps
+
+def addMoveToWarehouseActionToAnswer(truck, warehouse, steps): 
+    steps.append("move_to_warehouse truck=" + truck +" warehouse=" + warehouse)
+    return steps
 
 
 if __name__ == "__main__":
