@@ -18,7 +18,6 @@ def day2():
     warehouses, customers, trucks, box = parse_day(DAY2_FILENAME, warehouses, customers)
     steps = []
     steps = addAllLoadsForDay2(steps, customers)
-    print(steps)
 
 def day3():
     steps = []
@@ -30,14 +29,13 @@ def getDistManhattan(x1, y1, x2, y2):
     return xDiff + yDiff
 
 def addAllLoadsForDay2(steps, customers):
-    print("add loads called")
     orderDict = {}
-    for customer in customers: 
-        for order in customer["Orders"]:
-            if order["LegoId"] in orderDict:
-                orderDict[order["LegoId"]] += 1
+    for customer in customers:
+        for order in customers[customer].orders:
+            if order.box_id in orderDict:
+                orderDict[order.box_id] += 1
             else:
-                orderDict[order["LegoId"]] = 1
+                orderDict[order.box_id] = 1
     for legoType in orderDict:
         steps = addLoadActionToAnswer(0, orderDict[legoType], legoType, steps)
     return steps
