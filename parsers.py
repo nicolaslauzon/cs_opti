@@ -1,6 +1,6 @@
 import numpy as np
 import json
-from custom_types import Box, Order, Warehouse, Customer, Truck
+from custom_types import Box, BoxInventory, Order, Warehouse, Customer, Truck
 
 
 def parse_las_brickas() -> tuple[list[Warehouse], list[Customer], np.ndarray]:
@@ -67,8 +67,10 @@ def parse_day(filename, warehouses: list[Warehouse], customers: list[Customer]):
     for new_data in new_warehouse_data:
         for box_json in new_data["Stock"]:
             box = parsed_box[box_json["LegoId"]]
-            for _ in range(box_json["Quantity"]):
-                warehouses[new_data["Id"]].stock.append(box)
-    print("parsed warehouses")
+            boxInventory = BoxInventory(
+                box.id,
+                box_json["Quantity"],
+            )
+            warehouses[new_data["Id"]].stock.append(boxInventory)
 
     return warehouses, customers, parsed_trucks, parsed_box

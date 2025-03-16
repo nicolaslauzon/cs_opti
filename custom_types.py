@@ -6,6 +6,11 @@ class Box:
     id: int
     weight: int
 
+@dataclass
+class BoxInventory:
+    id: int
+    inventory: int
+
 
 @dataclass
 class Order:
@@ -27,7 +32,7 @@ class Warehouse:
     id: int
     x: int
     y: int
-    stock: list[Box] | None
+    stock: list[BoxInventory] | None
 
 
 @dataclass
