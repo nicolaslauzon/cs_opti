@@ -3,8 +3,8 @@ from dataclasses import dataclass
 import numpy as np
 
 DAY1_FILENAME = "./data/day_1.json"
-DAY1_FILENAME = "./data/day_1.json"
-DAY1_FILENAME = "./data/day_1.json"
+DAY2_FILENAME = "./data/day_2.json"
+DAY3_FILENAME = "./data/day_3.json"
 
 
 @dataclass
